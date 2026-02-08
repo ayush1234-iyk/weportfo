@@ -7,6 +7,9 @@ import Swal from "sweetalert2";
 import { MdEmail, MdLocationOn, MdPhone } from "react-icons/md";
 import { FaLinkedin, FaGithub } from "react-icons/fa";
 
+// ✅ HARD-CODED BACKEND URL (NO ENV)
+const BACKEND_URL = "https://portingxx.onrender.com";
+
 const Contact = () => {
   const [formData, setFormData] = useState({
     name: "",
@@ -22,28 +25,27 @@ const Contact = () => {
     e.preventDefault();
 
     try {
-      const res = await fetch("http://localhost:5000/api/contacts", {
+      const res = await fetch(`${BACKEND_URL}/api/contacts`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify(formData),
       });
 
-      if (res.ok) {
-        Swal.fire({
-          icon: "success",
-          title: "Message Sent!",
-          text: "Thanks for contacting me. I will reply soon.",
-        });
-        setFormData({ name: "", email: "", message: "" });
-      } else {
-        Swal.fire({
-          icon: "error",
-          title: "Failed",
-          text: "Message could not be sent. Try again later.",
-        });
+      if (!res.ok) {
+        throw new Error("Failed to send message");
       }
-    } catch (err) {
-      console.error(err);
+
+      Swal.fire({
+        icon: "success",
+        title: "Message Sent!",
+        text: "Thanks for contacting me. I will reply soon.",
+      });
+
+      setFormData({ name: "", email: "", message: "" });
+    } catch (error) {
+      console.error("Contact error:", error);
       Swal.fire({
         icon: "error",
         title: "Error",
@@ -54,7 +56,6 @@ const Contact = () => {
 
   return (
     <section className="contact">
-
       <motion.h2
         className="section-title"
         initial={{ opacity: 0, y: -20 }}
@@ -82,51 +83,73 @@ const Contact = () => {
         transition={{ duration: 0.8 }}
         viewport={{ once: true }}
       >
-
-        {/* ===== PERSONAL CONTACT CARD ===== */}
+        {/* ===== CONTACT INFO ===== */}
         <div className="contact-card personal-card">
           <h3>Contact Information</h3>
-          <p><MdEmail className="contact-icon"/> ayushamrit699@gmail.com</p>
-          <p><MdPhone className="contact-icon"/> +91 748834719</p>
-          <p><MdLocationOn className="contact-icon"/> Madhubani, India</p>
+          <p>
+            <MdEmail className="contact-icon" /> ayushamrit699@gmail.com
+          </p>
+          <p>
+            <MdPhone className="contact-icon" /> +91 748834719
+          </p>
+          <p>
+            <MdLocationOn className="contact-icon" /> Madhubani, India
+          </p>
 
           <h4>Connect with me</h4>
-          <p><FaLinkedin className="contact-icon"/> <a href="https://linkedin.com/in/ayush" target="_blank" rel="noreferrer">linkedin.com/in/ayush</a></p>
-          <p><FaGithub className="contact-icon"/> <a href="https://github.com/ayush1234-iyk" target="_blank" rel="noreferrer">github.com/ayush1234-iyk</a></p>
+          <p>
+            <FaLinkedin className="contact-icon" />{" "}
+            <a
+              href="https://linkedin.com/in/ayush"
+              target="_blank"
+              rel="noreferrer"
+            >
+              linkedin.com/in/ayush
+            </a>
+          </p>
+          <p>
+            <FaGithub className="contact-icon" />{" "}
+            <a
+              href="https://github.com/ayush1234-iyk"
+              target="_blank"
+              rel="noreferrer"
+            >
+              github.com/ayush1234-iyk
+            </a>
+          </p>
         </div>
 
-        {/* ===== SEND MESSAGE CARD ===== */}
+        {/* ===== MESSAGE FORM ===== */}
         <div className="contact-card message-card">
           <h3>Send a Message</h3>
           <form onSubmit={handleSubmit}>
-            <input 
-              type="text" 
-              name="name" 
-              placeholder="Your Name" 
-              value={formData.name} 
-              onChange={handleChange} 
+            <input
+              type="text"
+              name="name"
+              placeholder="Your Name"
+              value={formData.name}
+              onChange={handleChange}
               required
             />
-            <input 
-              type="email" 
-              name="email" 
-              placeholder="Your Email" 
-              value={formData.email} 
-              onChange={handleChange} 
+            <input
+              type="email"
+              name="email"
+              placeholder="Your Email"
+              value={formData.email}
+              onChange={handleChange}
               required
             />
-            <textarea 
-              name="message" 
-              placeholder="Your Message" 
-              value={formData.message} 
-              onChange={handleChange} 
+            <textarea
+              name="message"
+              placeholder="Your Message"
+              value={formData.message}
+              onChange={handleChange}
               rows="5"
               required
             ></textarea>
             <button type="submit">Send Message</button>
           </form>
         </div>
-
       </motion.div>
     </section>
   );
@@ -137,7 +160,6 @@ export default Contact;
 
 
 
-export default Contact;
 
 
 
